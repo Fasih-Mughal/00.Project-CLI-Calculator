@@ -2,6 +2,9 @@
 import inquirer from "inquirer";
 import chalk from "chalk";
 import chalkAnimation from "chalk-animation";
+import figlet from "figlet";
+import { createSpinner } from "nanospinner";
+import gradient from "gradient-string";
 //Steps to make a calculator:
 //1 Welcome the user
 //2 Ask for numbers and operation
@@ -15,10 +18,18 @@ function sleep(time) {
     });
 }
 //Make a function for welcome message and give animation color
-async function welcomeMsg(msg) {
-    let animation = chalkAnimation.rainbow(msg); //Start
+async function welcomeMsg() {
+    const spinner = createSpinner(chalk.yellow("Initializing Calculator...\n")).start();
     await sleep(2000);
-    animation.stop();
+    spinner.success();
+    // Add a banner
+    figlet(`\nMy  CLI  Calculator  !\n`, (err, data) => {
+        console.log(gradient.pastel.multiline(data) + "\n");
+    });
+    await sleep(1000);
+    //Add animation
+    let animation = chalkAnimation.rainbow("\n\t\t\t\tDeveloped by M.Fasih\n"); //Start
+    await sleep(2000);
     console.log(chalk.yellow(` 
      _____________________
     |  _________________  |
@@ -33,8 +44,8 @@ async function welcomeMsg(msg) {
     | |___|___|___| |___| |
     | | . | 0 | = | | / | |
     | |___|___|___| |___| |
-    |_____________________|\n`));
-    await getInput();
+    |_____________________|\n\n\n`));
+    animation.stop();
 }
 // Make a function to validate the input from user
 function validateNumber(input) {
@@ -51,50 +62,51 @@ async function getInput() {
             name: "firstNumber",
             type: "input",
             message: "Enter first number",
-            validate: validateNumber
+            validate: validateNumber,
         },
         {
             name: "operation",
             type: "list",
             message: "Select Operator",
-            choices: ["+", "-", "÷", "x", "^"]
+            choices: ["Addition (+)", "Subtraction (-)", "Divivsion (÷)", "Multiplication (x)", "Power (^)"],
         },
         {
             name: "secondNumber",
             type: "input",
             message: "Enter second number",
-            validate: validateNumber
-        }
+            validate: validateNumber,
+        },
     ]);
     let num1 = Number(answers.firstNumber);
     let num2 = Number(answers.secondNumber);
     switch (answers.operation) {
-        case "+":
-            console.log(chalk.green(`Result of ${num1} + ${num2} = ${num1 + num2}`));
+        case "Addition (+)":
+            console.log(chalk.yellow.bold(`\nResult of ${num1} + ${num2} = `) + chalk.green.bold(`${num1 + num2}\n`));
             break;
-        case "-":
-            console.log(chalk.green(`Result of ${num1} - ${num2} = ${num1 - num2}`));
+        case "Subtraction (-)":
+            console.log(chalk.yellow.bold(`\nResult of ${num1} - ${num2} = `) + chalk.green.bold(`${num1 - num2}\n`));
             break;
-        case "x":
-            console.log(chalk.green(`Result of ${num1} x ${num2} = ${num1 * num2}`));
+        case "Multiplication (x)":
+            console.log(chalk.yellow.bold(`\nResult of ${num1} x ${num2} = `) + chalk.green.bold(`${num1 * num2}\n`));
             break;
-        case "÷":
-            console.log(chalk.green(`Result of ${num1} ÷ ${num2} = ${num1 / num2}`));
+        case "Divivsion (÷)":
+            console.log(chalk.yellow.bold(`\nResult of ${num1} ÷ ${num2} = `) + chalk.green.bold(`${num1 / num2}\n`));
             break;
-        case "^":
-            console.log(chalk.green(`Result of ${num1} ^ ${num2} = ${Math.pow(num1, num2)}`));
+        case "Power (^)":
+            console.log(chalk.yellow.bold(`\nResult of ${num1} ^ ${num2} = `) + chalk.green.bold(`${Math.pow(num1, num2)}\n`));
             break;
     }
 }
-;
-async function startAgain() {
+async function toContinue() {
+    console.clear();
+    await welcomeMsg();
     do {
-        await welcomeMsg("\nWelcome to my Calculator");
+        await getInput();
         var again = await inquirer.prompt({
-            type: "input",
+            type: "confirm",
             name: "restart",
-            message: "Do you want to continue? Press Y / N: "
+            message: "Do you want to do another calculation?",
         });
-    } while (again.restart == "y" || again.restart == "Y" || again.restart == "yes" || again.restart == "Yes" || again.restart == "YES");
+    } while (again.restart);
 }
-startAgain();
+toContinue();
