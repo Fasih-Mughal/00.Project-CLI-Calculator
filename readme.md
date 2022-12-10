@@ -6,5 +6,5 @@ You can do in that following operations:
 1) Addition
 2) Subtraction
 3) Multiplication
-4) Subtraction
+4) Division
 5) Calculate the power of a number.
